@@ -35,7 +35,7 @@ class Agent301:
  ██████   ██████    ██████   ██████   ██      ██  ██████   ███████  ██   ██     
                                             """
         print(Fore.GREEN + Style.BRIGHT + banner + Style.RESET_ALL)
-        print(Fore.GREEN + f" Coub bot")
+        print(Fore.GREEN + f" Agent301 v2")
         print(Fore.RED + f" FREE TO USE = Join us on {Fore.GREEN}t.me/cucumber_scripts")
         print(Fore.YELLOW + f" before start please '{Fore.GREEN}git pull{Fore.YELLOW}' to update bot")
         print(f"{Fore.WHITE}~" * 60)
