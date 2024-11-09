@@ -69,7 +69,7 @@ class Agent301:
                 response = self.session.post(url, headers=self.headers)
                 response.raise_for_status()
                 result = response.json()
-                if result['ok']:
+                if result and result['ok']:
                     return result['result']
                 else:
                     return None
@@ -98,7 +98,7 @@ class Agent301:
                 response = self.session.post(url, headers=self.headers)
                 response.raise_for_status()
                 result = response.json()
-                if result['ok']:
+                if result and result['ok']:
                     return result['result']['data']
                 else:
                     return None
@@ -129,7 +129,7 @@ class Agent301:
                 response = self.session.post(url, headers=self.headers, data=data)
                 response.raise_for_status()
                 result = response.json()
-                if result['ok']:
+                if result and result['ok']:
                     return result['result']
                 else:
                     return None
@@ -157,9 +157,9 @@ class Agent301:
             try:
                 response = self.session.post(url, headers=self.headers)
                 response.raise_for_status()
-                data = response.json()
-                if data['ok']:
-                    return data['result']
+                result = response.json()
+                if result and result['ok']:
+                    return result['result']
                 else:
                     return None
             except (requests.RequestException, requests.HTTPError, ValueError) as e:
@@ -186,9 +186,9 @@ class Agent301:
         for attempt in range(retries):
             try:
                 response = self.session.post(url, headers=self.headers, data=data)
-                data = response.json()
-                if data['ok']:
-                    return data['result']
+                result = response.json()
+                if result and result['ok']:
+                    return result['result']
                 else:
                     return None
             except (requests.RequestException, requests.HTTPError, ValueError) as e:
@@ -215,9 +215,9 @@ class Agent301:
             try:
                 response = self.session.post(url, headers=self.headers)
                 response.raise_for_status()
-                data = response.json()
-                if data['ok']:
-                    return data['result']
+                result = response.json()
+                if result and result['ok']:
+                    return result['result']
                 else:
                     return None
             except (requests.RequestException, requests.HTTPError, ValueError) as e:
@@ -245,27 +245,27 @@ class Agent301:
             try:
                 response = self.session.post(url, headers=self.headers, json=data)
                 response.raise_for_status()
-                data = response.json()
-                if data:
-                    return data['result']
+                result = response.json()
+                if result and result['result']:
+                    return result['result']
                 else:
                     return None
             except (requests.RequestException, requests.HTTPError, ValueError) as e:
-                    if attempt < retries - 1:
-                        print(
-                            f"{Fore.RED + Style.BRIGHT}HTTP ERROR:{Style.RESET_ALL}"
-                            f"{Fore.YELLOW + Style.BRIGHT} Retrying... {Style.RESET_ALL}"
-                            f"{Fore.WHITE + Style.BRIGHT} [{attempt+1}/{retries}] {Style.RESET_ALL}",
-                            end="\r",
-                            flush=True
-                        )
-                        time.sleep(2)
-                    else:
-                        return None
+                if attempt < retries - 1:
+                    print(
+                        f"{Fore.RED + Style.BRIGHT}HTTP ERROR:{Style.RESET_ALL}"
+                        f"{Fore.YELLOW + Style.BRIGHT} Retrying... {Style.RESET_ALL}"
+                        f"{Fore.WHITE + Style.BRIGHT} [{attempt+1}/{retries}] {Style.RESET_ALL}",
+                        end="\r",
+                        flush=True
+                    )
+                    time.sleep(2)
+                else:
+                    return None
                     
     def check_cards(self, query: str, puzzle_combo, retries=3):
         url = "https://api.agent301.org/cards/check"
-        data = json.dumps({"cards":puzzle_combo})
+        data = json.dumps({"cards": puzzle_combo})
         self.headers.update({ 
             'Authorization': query,
             'Content-Type': 'application/json'
@@ -275,23 +275,23 @@ class Agent301:
             try:
                 response = self.session.post(url, headers=self.headers, data=data)
                 response.raise_for_status()
-                data = response.json()
-                if data:
-                    return data['result']
+                result = response.json()
+                if result and result['result']:
+                    return result['result']
                 else:
                     return None
             except (requests.RequestException, requests.HTTPError, ValueError) as e:
-                    if attempt < retries - 1:
-                        print(
-                            f"{Fore.RED + Style.BRIGHT}HTTP ERROR:{Style.RESET_ALL}"
-                            f"{Fore.YELLOW + Style.BRIGHT} Retrying... {Style.RESET_ALL}"
-                            f"{Fore.WHITE + Style.BRIGHT} [{attempt+1}/{retries}] {Style.RESET_ALL}",
-                            end="\r",
-                            flush=True
-                        )
-                        time.sleep(2)
-                    else:
-                        return None
+                if attempt < retries - 1:
+                    print(
+                        f"{Fore.RED + Style.BRIGHT}HTTP ERROR:{Style.RESET_ALL}"
+                        f"{Fore.YELLOW + Style.BRIGHT} Retrying... {Style.RESET_ALL}"
+                        f"{Fore.WHITE + Style.BRIGHT} [{attempt+1}/{retries}] {Style.RESET_ALL}",
+                        end="\r",
+                        flush=True
+                    )
+                    time.sleep(2)
+                else:
+                    return None
         
     def question(self):
         while True:
@@ -599,7 +599,7 @@ class Agent301:
                 f"{Fore.RED+Style.BRIGHT} Is None {Style.RESET_ALL}"
                 f"{Fore.MAGENTA+Style.BRIGHT}]{Style.RESET_ALL}"
             )
-        time.sleep(1)
+            return True
 
     def main(self):
         try:
@@ -645,7 +645,11 @@ class Agent301:
                     self.headers = get_headers(user_id)
 
                     try:
-                        self.process_query(query, game_puzzle, puzzle_combo)
+                        x = self.process_query(query, game_puzzle, puzzle_combo)
+                        if x:
+                            self.log(f"{Fore.RED + Style.BRIGHT}Need update query!{Style.RESET_ALL}")
+                            open("broken.txt", "a", encoding="utf-8").write(
+                                f"{i + 1}/{user_id}/Need update query \n")
                     except Exception as e:
                         self.log(f"{Fore.RED + Style.BRIGHT}An error process_query: {e}{Style.RESET_ALL}")
 
